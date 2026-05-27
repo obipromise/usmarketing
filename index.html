@@ -2270,14 +2270,10 @@ ul { list-style: none; }
 </footer>
 
 <script>
-/* ─── PAGE LOADER ─── */
+  
 window.addEventListener('load', () => {
-  const loader = document.getElementById('pageLoader');
-  if (loader) {
-    setTimeout(() => {
-      loader.classList.add('is-hidden');
-    }, 600);
-  }
+  document.querySelector('.page-loader')
+    ?.classList.add('is-hidden');
 });
 
 /* ─── NAV SCROLL EFFECTS ─── */
