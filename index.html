@@ -2270,12 +2270,11 @@ ul { list-style: none; }
 </footer>
 
 <script>
-  
-window.addEventListener('load', () => {
-  document.querySelector('.page-loader')
-    ?.classList.add('is-hidden');
+  document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    document.querySelector('.page-loader')?.classList.add('is-hidden');
+  }, 300);
 });
-
 /* ─── NAV SCROLL EFFECTS ─── */
 const navbar       = document.getElementById('navbar');
 const backToTop    = document.getElementById('backToTop');
