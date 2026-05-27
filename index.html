@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="description" content="Ibrahim Usman — Nigeria's #1 Affiliate Marketing Mentor. Lagos. 10 courses, 11,000+ students, ₦2.4B+ in student earnings.">
-<title>Ibrahim Usman · Affiliate Marketing Mentor · Lagos</title>
+<meta name="description" content="Ibrahim Usman — Nigeria's #1 Affiliate Marketing Mentor. Lagos. 10 courses, 45+ students, ₦60.3M+ in student earnings.">
+<title>Usmarketing · Affiliate Marketing Mentor · Lagos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
@@ -45,7 +45,9 @@
   --radius-md:     16px;
   --radius-lg:     24px;
 
-  --ease:          cubic-bezier(.25, .46, .45, .94);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce:   cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 /* ===========================================
@@ -71,8 +73,51 @@ button { cursor: pointer; background: none; border: none; font-family: inherit; 
 ul { list-style: none; }
 
 /* ===========================================
-   4K+ LAYOUT — Scales beautifully on 65" TV
-   Uses fluid typography and dynamic spacing
+   PAGE LOADER
+=========================================== */
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg-page);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+  transition: opacity 0.6s var(--ease-out-expo), visibility 0.6s var(--ease-out-expo);
+}
+.page-loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.page-loader__spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--border);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: loader-spin 0.8s linear infinite;
+}
+.page-loader__text {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  animation: loader-pulse 1.5s ease-in-out infinite;
+}
+@keyframes loader-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes loader-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* ===========================================
+   4K+ LAYOUT
 =========================================== */
 .wrapper {
   width: 100%;
@@ -81,32 +126,21 @@ ul { list-style: none; }
   padding-left: clamp(20px, 5vw, 120px);
   padding-right: clamp(20px, 5vw, 120px);
 }
-
-/* For 4K screens (3840px and above) */
 @media (min-width: 2560px) {
-  .wrapper {
-    max-width: min(2400px, 75vw);
-  }
-  
-  /* Scale up base font size for 4K readability */
-  body {
-    font-size: 1.1rem;
-  }
-  
-  .page-section {
-    padding: 128px 0;
-  }
+  .wrapper { max-width: min(2400px, 75vw); }
+  body { font-size: 1.1rem; }
+  .page-section { padding: 128px 0; }
 }
-
 .page-section {
   padding: clamp(64px, 8vw, 128px) 0;
+  position: relative;
 }
 .page-section--alt {
   background: var(--bg-section);
 }
 
 /* ===========================================
-   TYPOGRAPHY UTILITIES — Fluid scaling
+   TYPOGRAPHY
 =========================================== */
 .section-label {
   display: inline-flex;
@@ -118,6 +152,7 @@ ul { list-style: none; }
   text-transform: uppercase;
   color: var(--orange);
   margin-bottom: 13px;
+  transition: all 0.4s var(--ease-bounce);
 }
 .section-label::before {
   content: '';
@@ -125,8 +160,11 @@ ul { list-style: none; }
   width: 20px;
   height: 1px;
   background: var(--orange);
+  transition: width 0.4s var(--ease-bounce);
 }
+.section-label:hover::before { width: 40px; }
 .section-label--center { justify-content: center; }
+.section-label--center:hover::before { width: 40px; }
 
 .section-heading {
   font-size: clamp(2rem, 4vw, 4rem);
@@ -134,8 +172,11 @@ ul { list-style: none; }
   line-height: 1.15;
   letter-spacing: -.03em;
   color: var(--text-dark);
+  transition: transform 0.5s var(--ease-spring);
 }
-.section-heading em { font-style: normal; color: var(--orange); }
+.section-heading:hover { transform: scale(1.02); }
+.section-heading em { font-style: normal; color: var(--orange); display: inline-block; transition: all 0.4s var(--ease-bounce); }
+.section-heading:hover em { transform: translateY(-4px) rotate(-2deg); color: var(--orange-dark); }
 
 .section-subtext {
   font-size: clamp(0.85rem, 1.2vw, 1.1rem);
@@ -143,11 +184,12 @@ ul { list-style: none; }
   margin-top: 12px;
   max-width: 600px;
   line-height: 1.73;
+  transition: all 0.3s ease;
 }
 .section-subtext--center { margin: 12px auto 0; text-align: center; }
 
 /* ===========================================
-   BUTTONS — Touch-friendly for TV remote
+   BUTTONS — Wild hover animations
 =========================================== */
 .btn {
   display: inline-flex;
@@ -159,11 +201,33 @@ ul { list-style: none; }
   font-size: clamp(0.8rem, 1.1vw, 0.95rem);
   border-radius: 99px;
   cursor: pointer;
-  transition: all .2s var(--ease);
+  transition: all 0.4s var(--ease-bounce);
   white-space: nowrap;
   letter-spacing: .01em;
   padding: clamp(12px, 1.2vw, 16px) clamp(28px, 2.5vw, 40px);
+  position: relative;
+  overflow: hidden;
 }
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+.btn i { transition: transform 0.4s var(--ease-bounce); position: relative; z-index: 1; }
+.btn:hover i { transform: rotate(15deg) scale(1.2); }
+.btn span { position: relative; z-index: 1; }
+
 .btn--primary {
   background: var(--orange);
   color: #fff;
@@ -172,8 +236,8 @@ ul { list-style: none; }
 .btn--primary:hover {
   background: var(--orange-dark);
   border-color: var(--orange-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(197,90,44,.28);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 20px 40px rgba(197,90,44,.4);
 }
 .btn--secondary {
   background: transparent;
@@ -184,6 +248,7 @@ ul { list-style: none; }
   border-color: var(--orange);
   color: var(--orange);
   background: var(--orange-faint);
+  transform: translateY(-4px) scale(1.03);
 }
 .btn--whatsapp {
   background: var(--green-wa);
@@ -192,8 +257,8 @@ ul { list-style: none; }
 }
 .btn--whatsapp:hover {
   filter: brightness(1.06);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(37,211,102,.28);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 20px 40px rgba(37,211,102,.35);
 }
 .btn--ghost-light {
   background: transparent;
@@ -201,8 +266,10 @@ ul { list-style: none; }
   border: 1.5px solid rgba(255,255,255,.28);
 }
 .btn--ghost-light:hover {
-  background: rgba(255,255,255,.1);
+  background: rgba(255,255,255,.12);
   border-color: rgba(255,255,255,.65);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(255,255,255,.1);
 }
 .btn--white {
   background: #fff;
@@ -210,8 +277,8 @@ ul { list-style: none; }
   border: 1.5px solid #fff;
 }
 .btn--white:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,.14);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 20px 40px rgba(0,0,0,.15);
 }
 .btn--small { padding: clamp(8px, 1vw, 12px) clamp(18px, 1.8vw, 28px); font-size: clamp(0.7rem, 1vw, 0.85rem); }
 .btn--full   { width: 100%; justify-content: center; }
@@ -228,11 +295,12 @@ ul { list-style: none; }
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid transparent;
-  transition: border-color .3s, box-shadow .3s;
+  transition: all 0.4s var(--ease-out-expo);
 }
 .navbar--scrolled {
   border-bottom-color: var(--border);
-  box-shadow: 0 2px 20px rgba(0,0,0,.04);
+  box-shadow: 0 4px 30px rgba(0,0,0,.06);
+  background: rgba(249,247,244,.98);
 }
 .navbar__inner {
   display: flex;
@@ -247,8 +315,14 @@ ul { list-style: none; }
   letter-spacing: -.02em;
   flex-shrink: 0;
   color: var(--text-dark);
+  transition: all 0.4s var(--ease-spring);
 }
-.navbar__logo span { color: var(--orange); }
+.navbar__logo:hover { 
+  transform: scale(1.1) rotate(-3deg); 
+  color: var(--orange);
+}
+.navbar__logo span { color: var(--orange); transition: all 0.4s var(--ease-spring); }
+.navbar__logo:hover span { color: var(--text-dark); }
 
 .navbar__links {
   display: flex;
@@ -259,9 +333,26 @@ ul { list-style: none; }
   font-size: clamp(0.75rem, 1vw, 0.9rem);
   font-weight: 500;
   color: var(--text-mid);
-  transition: color .15s;
+  transition: all 0.3s var(--ease-bounce);
+  position: relative;
+  padding: 4px 0;
 }
-.navbar__links a:hover,
+.navbar__links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--orange);
+  transition: width 0.4s var(--ease-bounce);
+}
+.navbar__links a:hover {
+  color: var(--orange);
+  transform: translateY(-2px);
+}
+.navbar__links a:hover::after,
+.navbar__links a.is-active::after { width: 100%; }
 .navbar__links a.is-active { color: var(--orange); }
 
 .navbar__actions {
@@ -270,7 +361,6 @@ ul { list-style: none; }
   gap: 12px;
   flex-shrink: 0;
 }
-
 #navEnrolBtn { display: none; }
 
 /* Hamburger */
@@ -284,17 +374,23 @@ ul { list-style: none; }
   justify-content: center;
   flex-direction: column;
   gap: 5px;
+  transition: all 0.4s var(--ease-spring);
+}
+.hamburger:hover { 
+  background: var(--orange-faint); 
+  border-color: var(--orange-soft);
+  transform: rotate(90deg);
 }
 .hamburger__bar {
   display: block;
   width: 18px; height: 2px;
   background: var(--text-dark);
-  transition: .22s;
+  transition: .3s var(--ease-bounce);
   transform-origin: center;
 }
 .hamburger__bar:nth-child(2) { width: 12px; }
 .hamburger.is-open .hamburger__bar:nth-child(1) { transform: rotate(45deg) translate(5px,5px); width: 18px; }
-.hamburger.is-open .hamburger__bar:nth-child(2) { opacity: 0; }
+.hamburger.is-open .hamburger__bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .hamburger.is-open .hamburger__bar:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); width: 18px; }
 
 /* ===========================================
@@ -307,10 +403,9 @@ ul { list-style: none; }
   z-index: 950;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .25s;
+  transition: opacity .3s ease;
 }
 .drawer-overlay.is-visible { opacity: 1; pointer-events: all; }
-
 .drawer {
   position: fixed;
   top: 0; right: 0; bottom: 0;
@@ -318,13 +413,12 @@ ul { list-style: none; }
   background: var(--bg-white);
   z-index: 1000;
   transform: translateX(100%);
-  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  transition: transform .4s var(--ease-out-expo);
   display: flex;
   flex-direction: column;
   border-left: 1px solid var(--border);
 }
 .drawer.is-open { transform: translateX(0); }
-
 .drawer__header {
   display: flex;
   align-items: center;
@@ -339,10 +433,13 @@ ul { list-style: none; }
   display: flex; align-items: center; justify-content: center;
   color: var(--text-mid);
   font-size: 0.75rem;
-  transition: color .15s;
+  transition: all 0.4s var(--ease-spring);
 }
-.drawer__close:hover { color: var(--orange); }
-
+.drawer__close:hover { 
+  background: var(--orange-faint); 
+  color: var(--orange); 
+  transform: rotate(90deg) scale(1.2);
+}
 .drawer__nav {
   flex: 1;
   padding: 24px 20px;
@@ -356,30 +453,64 @@ ul { list-style: none; }
   font-size: 1rem;
   font-weight: 500;
   color: var(--text-mid);
-  transition: .15s;
+  transition: all 0.3s var(--ease-bounce);
 }
 .drawer__nav a:hover,
-.drawer__nav a.is-active { background: var(--orange-faint); color: var(--orange); }
-
+.drawer__nav a.is-active { 
+  background: var(--orange-faint); 
+  color: var(--orange); 
+  transform: translateX(10px) scale(1.03);
+}
 .drawer__footer {
   padding: 20px 24px;
   border-top: 1px solid var(--border);
 }
 
 /* ===========================================
-   HERO — 4K optimized
-   Now uses fluid grids that scale properly
+   HERO — CRAZY ANIMATIONS
 =========================================== */
 .hero {
   min-height: 100svh;
   padding-top: calc(var(--nav-height) + clamp(40px, 8vh, 100px));
   padding-bottom: clamp(50px, 8vh, 100px);
+  position: relative;
+  overflow: hidden;
 }
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(197,90,44,0.04), transparent 70%);
+  animation: hero-float 8s ease-in-out infinite;
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40%;
+  left: -20%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(197,90,44,0.05), transparent 70%);
+  animation: hero-float 8s ease-in-out 3s infinite;
+  pointer-events: none;
+}
+@keyframes hero-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.05); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+
 .hero__grid {
   display: grid;
   grid-template-columns: 1fr minmax(420px, 1fr);
   gap: clamp(40px, 6vw, 100px);
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 .hero__live-badge {
   display: inline-flex;
@@ -394,6 +525,16 @@ ul { list-style: none; }
   font-weight: 600;
   color: var(--orange);
   letter-spacing: .04em;
+  animation: badge-pulse 2s ease-in-out infinite;
+  transition: all 0.4s var(--ease-spring);
+}
+.hero__live-badge:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 25px rgba(197,90,44,.2);
+}
+@keyframes badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(197,90,44,0.2); }
+  50% { box-shadow: 0 0 0 12px rgba(197,90,44,0); }
 }
 .hero__live-dot {
   width: 8px; height: 8px;
@@ -402,8 +543,8 @@ ul { list-style: none; }
   animation: live-pulse 2s infinite;
 }
 @keyframes live-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .3; }
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .3; transform: scale(1.8); }
 }
 .hero__title {
   font-size: clamp(2.8rem, 6vw, 5.5rem);
@@ -412,15 +553,32 @@ ul { list-style: none; }
   letter-spacing: -.035em;
   margin-bottom: 24px;
   color: var(--text-dark);
+  transition: all 0.5s var(--ease-spring);
 }
-.hero__title em { font-style: normal; color: var(--orange); }
-
+.hero__title:hover {
+  transform: skewX(-2deg);
+}
+.hero__title em { 
+  font-style: normal; 
+  color: var(--orange); 
+  display: inline-block;
+  animation: title-shimmer 3s ease-in-out infinite;
+}
+@keyframes title-shimmer {
+  0%, 100% { color: var(--orange); }
+  50% { color: var(--orange-dark); text-shadow: 0 0 20px rgba(197,90,44,0.3); }
+}
 .hero__description {
   font-size: clamp(0.9rem, 1.3vw, 1.15rem);
   color: var(--text-mid);
   max-width: 540px;
   line-height: 1.74;
   margin-bottom: 32px;
+  transition: all 0.3s ease;
+}
+.hero__description:hover {
+  transform: translateX(4px);
+  color: var(--text-dark);
 }
 .hero__buttons {
   display: flex;
@@ -435,6 +593,10 @@ ul { list-style: none; }
   flex-wrap: wrap;
   padding-top: 28px;
   border-top: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+.hero__proof:hover {
+  border-top-color: var(--orange-soft);
 }
 .hero__avatars { display: flex; }
 .hero__avatar {
@@ -444,18 +606,32 @@ ul { list-style: none; }
   border: 2px solid var(--bg-page);
   display: flex; align-items: center; justify-content: center;
   font-size: 0.7rem; font-weight: 700; color: var(--orange);
+  transition: all 0.4s var(--ease-bounce);
+  cursor: default;
+}
+.hero__avatar:hover { 
+  transform: translateY(-8px) scale(1.2); 
+  background: var(--orange);
+  color: #fff;
+  z-index: 2;
 }
 .hero__avatar + .hero__avatar { margin-left: -8px; }
-.hero__proof-text { font-size: clamp(0.75rem, 1vw, 0.85rem); color: var(--text-mid); }
+.hero__proof-text { font-size: clamp(0.75rem, 1vw, 0.85rem); color: var(--text-mid); transition: all 0.3s ease; }
 .hero__proof-text strong { color: var(--text-dark); font-weight: 600; }
-.hero__divider { width: 1px; height: 30px; background: var(--border); flex-shrink: 0; }
+.hero__proof:hover .hero__proof-text { color: var(--text-dark); }
+.hero__divider { width: 1px; height: 30px; background: var(--border); flex-shrink: 0; transition: all 0.3s ease; }
+.hero__proof:hover .hero__divider { background: var(--orange-soft); height: 36px; }
 .hero__stat-value {
   font-size: clamp(1.3rem, 1.8vw, 1.8rem);
   font-weight: 700;
   color: var(--orange); line-height: 1;
   letter-spacing: -.025em;
+  transition: all 0.4s var(--ease-bounce);
+  cursor: default;
 }
-.hero__stat-label { font-size: clamp(0.65rem, 0.9vw, 0.75rem); color: var(--text-light); margin-top: 4px; }
+.hero__stat-value:hover { transform: scale(1.2); color: var(--orange-dark); }
+.hero__stat-label { font-size: clamp(0.65rem, 0.9vw, 0.75rem); color: var(--text-light); margin-top: 4px; transition: all 0.3s ease; }
+.hero__stat-value:hover + .hero__stat-label { color: var(--orange); }
 
 .hero__image-wrap {
   border-radius: var(--radius-lg);
@@ -465,12 +641,25 @@ ul { list-style: none; }
   box-shadow: var(--shadow-lg);
   position: relative;
   flex-shrink: 0;
+  transition: all 0.6s var(--ease-out-expo);
+  animation: image-float 6s ease-in-out infinite;
+}
+@keyframes image-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.hero__image-wrap:hover {
+  animation: none;
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 30px 70px rgba(0,0,0,.18);
 }
 .hero__image-wrap img {
   width: 100%; height: 100%;
   object-fit: cover;
   object-position: top center;
+  transition: transform 0.8s var(--ease-out-expo);
 }
+.hero__image-wrap:hover img { transform: scale(1.08); }
 .hero__image-caption {
   position: absolute;
   bottom: 20px; left: 20px; right: 20px;
@@ -479,6 +668,12 @@ ul { list-style: none; }
   backdrop-filter: blur(12px);
   border-radius: var(--radius-sm);
   color: #fff;
+  transform: translateY(0);
+  transition: all 0.5s var(--ease-out-expo);
+}
+.hero__image-wrap:hover .hero__image-caption { 
+  background: rgba(10,8,5,.9);
+  transform: translateY(-8px);
 }
 .hero__image-caption-name  { font-weight: 600; font-size: clamp(0.85rem, 1.2vw, 1rem); }
 .hero__image-caption-role  {
@@ -490,25 +685,49 @@ ul { list-style: none; }
   border-radius: 50%;
   background: var(--green-wa);
   display: inline-block;
+  animation: live-pulse 2s infinite;
 }
 
 /* ===========================================
-   STATS BAND — 4K ready
+   STATS BAND
 =========================================== */
 .stats-band {
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
 }
 .stats-band__grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  position: relative;
+  z-index: 1;
 }
 .stats-band__cell {
   padding: clamp(28px, 4vw, 60px) 20px;
   text-align: center;
   border-right: 1px solid var(--border);
+  transition: all 0.5s var(--ease-bounce);
+  cursor: default;
+  position: relative;
 }
 .stats-band__cell:last-child { border-right: none; }
+.stats-band__cell:hover {
+  background: var(--orange-faint);
+  transform: translateY(-6px);
+}
+.stats-band__cell::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: var(--orange);
+  transition: width 0.4s var(--ease-bounce);
+}
+.stats-band__cell:hover::after { width: 60px; }
 .stats-band__number {
   font-size: clamp(1.8rem, 3vw, 3rem);
   font-weight: 700;
@@ -516,16 +735,23 @@ ul { list-style: none; }
   line-height: 1;
   letter-spacing: -.03em;
   margin-bottom: 8px;
+  transition: all 0.4s var(--ease-bounce);
+}
+.stats-band__cell:hover .stats-band__number { 
+  transform: scale(1.15); 
+  color: var(--orange-dark);
 }
 .stats-band__label {
   font-size: clamp(0.65rem, 1vw, 0.8rem);
   color: var(--text-light);
   font-weight: 500;
   letter-spacing: .02em;
+  transition: all 0.3s ease;
 }
+.stats-band__cell:hover .stats-band__label { color: var(--orange); }
 
 /* ===========================================
-   ABOUT — fluid photo column
+   ABOUT — Animated elements
 =========================================== */
 .about__grid {
   display: grid;
@@ -544,12 +770,19 @@ ul { list-style: none; }
   aspect-ratio: 3/4;
   background: var(--bg-muted);
   box-shadow: var(--shadow-md);
+  transition: all 0.6s var(--ease-out-expo);
+}
+.about__photo-inner:hover {
+  transform: translateY(-10px) rotate(-1deg);
+  box-shadow: var(--shadow-lg);
 }
 .about__photo-inner img {
   width: 100%; height: 100%;
   object-fit: cover;
   object-position: top;
+  transition: transform 0.8s var(--ease-out-expo);
 }
+.about__photo-inner:hover img { transform: scale(1.08); }
 .about__years-badge {
   position: absolute;
   bottom: -16px; right: -16px;
@@ -559,6 +792,17 @@ ul { list-style: none; }
   border-radius: 14px;
   text-align: center;
   box-shadow: 0 8px 28px rgba(197,90,44,.36);
+  animation: badge-bounce 3s ease-in-out infinite;
+  transition: all 0.4s var(--ease-spring);
+}
+.about__years-badge:hover { 
+  animation: none;
+  transform: scale(1.15) rotate(5deg); 
+  box-shadow: 0 14px 38px rgba(197,90,44,.5);
+}
+@keyframes badge-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 .about__years-badge .years-number { font-size: clamp(1.8rem, 2.5vw, 2.5rem); font-weight: 700; line-height: 1; letter-spacing: -.03em; }
 .about__years-badge .years-label  { font-size: clamp(0.65rem, 0.9vw, 0.75rem); opacity: .8; margin-top: 3px; }
@@ -572,6 +816,12 @@ ul { list-style: none; }
   border-left: 3px solid var(--orange);
   padding-left: 20px;
   margin: 24px 0 28px;
+  transition: all 0.4s ease;
+}
+.about__quote:hover {
+  border-left-width: 6px;
+  color: var(--text-dark);
+  transform: translateX(4px);
 }
 .about__features { display: flex; flex-direction: column; gap: 14px; margin: 20px 0; }
 .about__feature-item {
@@ -579,6 +829,14 @@ ul { list-style: none; }
   align-items: flex-start;
   font-size: clamp(0.85rem, 1.1vw, 1rem);
   color: var(--text-mid);
+  transition: all 0.4s var(--ease-bounce);
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+.about__feature-item:hover { 
+  transform: translateX(12px) scale(1.02); 
+  color: var(--text-dark);
+  background: var(--orange-faint);
 }
 .about__feature-icon {
   width: 26px; height: 26px;
@@ -589,6 +847,12 @@ ul { list-style: none; }
   font-size: 0.75rem;
   flex-shrink: 0;
   margin-top: 2px;
+  transition: all 0.4s var(--ease-bounce);
+}
+.about__feature-item:hover .about__feature-icon {
+  background: var(--orange);
+  color: #fff;
+  transform: rotate(360deg) scale(1.2);
 }
 .about__feature-item strong { color: var(--text-dark); font-weight: 600; }
 .about__buttons { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 28px; }
@@ -607,6 +871,25 @@ ul { list-style: none; }
   color: #fff;
   border-radius: var(--radius-lg);
   padding: clamp(32px, 5vw, 56px);
+  transition: all 0.5s var(--ease-out-expo);
+  position: relative;
+  overflow: hidden;
+}
+.affiliate__dark-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+  transition: left 0.6s ease;
+}
+.affiliate__dark-card:hover::before {
+  left: 100%;
+}
+.affiliate__dark-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 25px 55px rgba(0,0,0,.25);
 }
 .affiliate__dark-card .card-label {
   font-size: clamp(0.65rem, 1vw, 0.8rem);
@@ -615,7 +898,9 @@ ul { list-style: none; }
   text-transform: uppercase;
   opacity: .36;
   margin-bottom: 20px;
+  transition: opacity 0.3s ease;
 }
+.affiliate__dark-card:hover .card-label { opacity: .6; }
 .affiliate__dark-card blockquote {
   font-size: clamp(1rem, 1.6vw, 1.2rem);
   font-weight: 400;
@@ -623,12 +908,21 @@ ul { list-style: none; }
   line-height: 1.64;
   margin-bottom: 28px;
   opacity: .88;
+  transition: all 0.3s ease;
 }
+.affiliate__dark-card:hover blockquote { opacity: 1; }
+
 .affiliate__light-card {
   background: var(--bg-white);
   border: 1px solid var(--border-card);
   border-radius: var(--radius-lg);
   padding: clamp(32px, 5vw, 56px);
+  transition: all 0.5s var(--ease-out-expo);
+}
+.affiliate__light-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--orange-soft);
 }
 .affiliate__light-card h3 { font-size: clamp(1rem, 1.4vw, 1.2rem); font-weight: 600; margin-bottom: 24px; }
 
@@ -636,6 +930,14 @@ ul { list-style: none; }
 .checklist__item {
   display: flex; align-items: center; gap: 12px;
   font-size: clamp(0.85rem, 1.1vw, 1rem); color: var(--text-mid);
+  transition: all 0.4s var(--ease-bounce);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.checklist__item:hover { 
+  transform: translateX(10px) scale(1.02); 
+  color: var(--text-dark);
+  background: var(--orange-faint);
 }
 .checklist__icon {
   width: 22px; height: 22px;
@@ -646,10 +948,16 @@ ul { list-style: none; }
   color: #10B97F;
   font-size: 0.65rem;
   flex-shrink: 0;
+  transition: all 0.4s var(--ease-bounce);
+}
+.checklist__item:hover .checklist__icon { 
+  background: #10B97F; 
+  color: #fff; 
+  transform: rotate(360deg) scale(1.3);
 }
 
 /* ===========================================
-   COURSES — 2-col compact list
+   COURSES
 =========================================== */
 .courses__list {
   display: grid;
@@ -667,13 +975,23 @@ ul { list-style: none; }
   gap: 16px;
   padding: 20px 24px;
   background: var(--bg-white);
-  transition: background .18s;
+  transition: all 0.5s var(--ease-bounce);
   text-decoration: none;
+  position: relative;
+  z-index: 1;
 }
-.course-row:hover { background: #FFFCF9; }
-.course-row:hover .course-row__arrow { opacity: 1; transform: translateX(4px); }
-.course-row:hover .course-row__icon  { background: var(--orange); color: #fff; }
-
+.course-row:hover {
+  background: #FFFCF9;
+  transform: translateX(10px) scale(1.01);
+  z-index: 2;
+  box-shadow: 0 8px 30px rgba(0,0,0,.1);
+}
+.course-row:hover .course-row__arrow { opacity: 1; transform: translateX(8px) scale(1.2); }
+.course-row:hover .course-row__icon { 
+  background: var(--orange); 
+  color: #fff; 
+  transform: rotate(-10deg) scale(1.15);
+}
 .course-row__number {
   font-size: 0.65rem;
   font-weight: 600;
@@ -681,7 +999,9 @@ ul { list-style: none; }
   min-width: 24px;
   letter-spacing: .04em;
   flex-shrink: 0;
+  transition: all 0.3s ease;
 }
+.course-row:hover .course-row__number { color: var(--orange); }
 .course-row__icon {
   width: 42px; height: 42px;
   border-radius: 10px;
@@ -690,7 +1010,7 @@ ul { list-style: none; }
   color: var(--orange);
   font-size: 1rem;
   flex-shrink: 0;
-  transition: background .18s, color .18s;
+  transition: all 0.5s var(--ease-bounce);
 }
 .course-row__body { flex: 1; min-width: 0; }
 .course-row__title {
@@ -698,10 +1018,9 @@ ul { list-style: none; }
   font-weight: 600;
   color: var(--text-dark);
   line-height: 1.3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  transition: all 0.3s ease;
 }
+.course-row:hover .course-row__title { color: var(--orange); }
 .course-row__level {
   display: inline-block;
   font-size: 0.65rem;
@@ -711,24 +1030,37 @@ ul { list-style: none; }
   padding: 3px 10px;
   border-radius: 99px;
   margin-top: 5px;
+  transition: all 0.3s ease;
 }
+.course-row:hover .course-row__level { background: var(--orange); color: #fff; }
 .course-row__arrow {
   color: var(--orange);
   font-size: 0.85rem;
   flex-shrink: 0;
   opacity: 0;
-  transition: opacity .18s, transform .18s;
+  transition: all 0.5s var(--ease-bounce);
 }
 .courses__footer-note {
   text-align: center;
   margin-top: 24px;
   font-size: clamp(0.75rem, 1vw, 0.85rem);
   color: var(--text-light);
+  transition: all 0.3s ease;
 }
-.courses__footer-note a { color: var(--orange); font-weight: 600; }
+.courses__footer-note:hover { color: var(--text-mid); }
+.courses__footer-note a { 
+  color: var(--orange); 
+  font-weight: 600; 
+  transition: all 0.3s var(--ease-bounce);
+  display: inline-block;
+}
+.courses__footer-note a:hover { 
+  color: var(--orange-dark); 
+  transform: translateY(-2px);
+}
 
 /* ===========================================
-   VALUES — 4K grid
+   VALUES
 =========================================== */
 .values__grid {
   display: grid;
@@ -742,9 +1074,14 @@ ul { list-style: none; }
   border-radius: var(--radius-md);
   padding: clamp(28px, 3.5vw, 40px) clamp(20px, 2.5vw, 30px);
   text-align: center;
-  transition: all .2s;
+  transition: all 0.6s var(--ease-bounce);
+  cursor: default;
 }
-.value-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--orange-soft); }
+.value-card:hover {
+  transform: translateY(-16px) rotate(1deg) scale(1.05);
+  box-shadow: 0 25px 55px rgba(0,0,0,.12);
+  border-color: var(--orange);
+}
 .value-card__icon {
   width: 56px; height: 56px;
   background: var(--orange-faint);
@@ -753,14 +1090,31 @@ ul { list-style: none; }
   color: var(--orange);
   font-size: 1.3rem;
   margin: 0 auto 16px;
-  transition: .2s;
+  transition: all 0.5s var(--ease-bounce);
 }
-.value-card:hover .value-card__icon { background: var(--orange); color: #fff; }
-.value-card__title { font-weight: 600; font-size: clamp(0.9rem, 1.2vw, 1.05rem); margin-bottom: 8px; }
-.value-card__desc  { font-size: clamp(0.75rem, 1vw, 0.85rem); color: var(--text-light); line-height: 1.6; }
+.value-card:hover .value-card__icon {
+  background: var(--orange);
+  color: #fff;
+  transform: rotate(15deg) scale(1.15);
+  border-radius: 50%;
+}
+.value-card__title { 
+  font-weight: 600; 
+  font-size: clamp(0.9rem, 1.2vw, 1.05rem); 
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+.value-card:hover .value-card__title { color: var(--orange); }
+.value-card__desc  { 
+  font-size: clamp(0.75rem, 1vw, 0.85rem); 
+  color: var(--text-light); 
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+.value-card:hover .value-card__desc { color: var(--text-mid); }
 
 /* ===========================================
-   RESULTS — 3-col flexible
+   RESULTS
 =========================================== */
 .results__grid {
   display: grid;
@@ -773,12 +1127,44 @@ ul { list-style: none; }
   border: 1px solid var(--border-card);
   border-radius: var(--radius-md);
   padding: clamp(24px, 3vw, 36px);
-  transition: all .2s;
+  transition: all 0.6s var(--ease-bounce);
+  cursor: default;
 }
-.result-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--orange-soft); }
-.result-card__stat  { font-size: clamp(1.8rem, 2.5vw, 2.5rem); font-weight: 700; color: var(--orange); letter-spacing: -.03em; line-height: 1; margin-bottom: 10px; }
-.result-card__title { font-weight: 600; font-size: clamp(0.9rem, 1.2vw, 1rem); margin-bottom: 12px; }
-.result-card__body  { font-size: clamp(0.8rem, 1.1vw, 0.9rem); color: var(--text-mid); line-height: 1.66; padding-bottom: 18px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.result-card:hover {
+  transform: translateY(-14px) scale(1.04);
+  box-shadow: 0 28px 60px rgba(0,0,0,.14);
+  border-color: var(--orange-soft);
+}
+.result-card__stat { 
+  font-size: clamp(1.8rem, 2.5vw, 2.5rem); 
+  font-weight: 700; 
+  color: var(--orange); 
+  letter-spacing: -.03em; 
+  line-height: 1; 
+  margin-bottom: 10px; 
+  transition: all 0.5s var(--ease-bounce);
+}
+.result-card:hover .result-card__stat { 
+  transform: scale(1.1); 
+  color: var(--orange-dark);
+  text-shadow: 0 4px 15px rgba(197,90,44,.2);
+}
+.result-card__title { 
+  font-weight: 600; 
+  font-size: clamp(0.9rem, 1.2vw, 1rem); 
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+.result-card:hover .result-card__title { color: var(--orange); }
+.result-card__body  { 
+  font-size: clamp(0.8rem, 1.1vw, 0.9rem); 
+  color: var(--text-mid); 
+  line-height: 1.66; 
+  padding-bottom: 18px; 
+  border-bottom: 1px solid var(--border); 
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
 .result-card__author { display: flex; align-items: center; gap: 10px; }
 .result-card__avatar {
   width: 34px; height: 34px;
@@ -787,6 +1173,12 @@ ul { list-style: none; }
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 0.7rem; color: var(--orange);
   flex-shrink: 0;
+  transition: all 0.5s var(--ease-bounce);
+}
+.result-card:hover .result-card__avatar { 
+  background: var(--orange); 
+  color: #fff; 
+  transform: rotate(10deg) scale(1.2);
 }
 .result-card__author-name { font-weight: 600; font-size: clamp(0.8rem, 1vw, 0.9rem); }
 .result-card__author-city { color: var(--text-light); font-size: clamp(0.65rem, 0.9vw, 0.75rem); margin-top: 2px; }
@@ -807,16 +1199,48 @@ ul { list-style: none; }
   padding: clamp(24px, 3vw, 36px);
   display: flex;
   flex-direction: column;
-  transition: all .2s;
+  transition: all 0.6s var(--ease-bounce);
 }
-.testimonial-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--orange-soft); }
-.testimonial-card__stars { display: flex; gap: 3px; margin-bottom: 16px; color: #F5A623; font-size: clamp(0.7rem, 1vw, 0.85rem); }
-.testimonial-card__quote { font-size: clamp(0.85rem, 1.1vw, 0.95rem); color: var(--text-mid); line-height: 1.7; flex: 1; margin-bottom: 20px; }
+.testimonial-card:hover {
+  transform: translateY(-14px) scale(1.04) rotate(-0.5deg);
+  box-shadow: 0 28px 60px rgba(0,0,0,.14);
+  border-color: var(--orange-soft);
+}
+.testimonial-card__stars { 
+  display: flex; 
+  gap: 3px; 
+  margin-bottom: 16px; 
+  color: #F5A623; 
+  font-size: clamp(0.7rem, 1vw, 0.85rem); 
+}
+.testimonial-card__stars i { 
+  transition: all 0.3s var(--ease-bounce); 
+}
+.testimonial-card:hover .testimonial-card__stars i { 
+  transform: scale(1.3); 
+  color: #FF8C00;
+}
+.testimonial-card:hover .testimonial-card__stars i:nth-child(1) { transition-delay: 0s; }
+.testimonial-card:hover .testimonial-card__stars i:nth-child(2) { transition-delay: 0.05s; }
+.testimonial-card:hover .testimonial-card__stars i:nth-child(3) { transition-delay: 0.1s; }
+.testimonial-card:hover .testimonial-card__stars i:nth-child(4) { transition-delay: 0.15s; }
+.testimonial-card:hover .testimonial-card__stars i:nth-child(5) { transition-delay: 0.2s; }
+.testimonial-card__quote { 
+  font-size: clamp(0.85rem, 1.1vw, 0.95rem); 
+  color: var(--text-mid); 
+  line-height: 1.7; 
+  flex: 1; 
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+.testimonial-card:hover .testimonial-card__quote { color: var(--text-dark); }
 .testimonial-card__footer {
   display: flex; align-items: center; gap: 12px;
   padding-top: 18px;
   border-top: 1px solid var(--border);
+  transition: all 0.3s ease;
 }
+.testimonial-card:hover .testimonial-card__footer { border-top-color: var(--orange-soft); }
 .testimonial-card__avatar {
   width: 42px; height: 42px;
   border-radius: 50%;
@@ -824,6 +1248,12 @@ ul { list-style: none; }
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 0.75rem; color: var(--orange);
   flex-shrink: 0;
+  transition: all 0.5s var(--ease-bounce);
+}
+.testimonial-card:hover .testimonial-card__avatar { 
+  background: var(--orange); 
+  color: #fff; 
+  transform: rotate(15deg) scale(1.2);
 }
 .testimonial-card__name     { font-weight: 600; font-size: clamp(0.85rem, 1.1vw, 0.95rem); }
 .testimonial-card__location { font-size: clamp(0.65rem, 0.9vw, 0.75rem); color: var(--text-light); margin-top: 2px; }
@@ -835,6 +1265,12 @@ ul { list-style: none; }
   padding: 4px 12px;
   border-radius: 99px;
   flex-shrink: 0;
+  transition: all 0.5s var(--ease-bounce);
+}
+.testimonial-card:hover .testimonial-card__earning { 
+  background: var(--orange); 
+  color: #fff; 
+  transform: scale(1.1);
 }
 
 /* ===========================================
@@ -844,7 +1280,11 @@ ul { list-style: none; }
   max-width: 800px;
   margin: 48px auto 0;
 }
-.faq__item { border-bottom: 1px solid var(--border); }
+.faq__item { 
+  border-bottom: 1px solid var(--border); 
+  transition: all 0.3s ease;
+}
+.faq__item:hover { border-bottom-color: var(--orange-soft); }
 .faq__question {
   width: 100%;
   text-align: left;
@@ -856,9 +1296,13 @@ ul { list-style: none; }
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  transition: color .18s;
+  transition: all 0.4s ease;
 }
-.faq__question:hover { color: var(--orange); }
+.faq__question:hover { 
+  color: var(--orange); 
+  padding-left: 12px;
+  letter-spacing: 0.01em;
+}
 .faq__icon {
   width: 26px; height: 26px;
   border-radius: 50%;
@@ -868,18 +1312,34 @@ ul { list-style: none; }
   display: flex; align-items: center; justify-content: center;
   color: var(--text-light);
   font-size: 0.65rem;
-  transition: .22s;
+  transition: all 0.5s var(--ease-bounce);
+}
+.faq__question:hover .faq__icon {
+  background: var(--orange-faint);
+  border-color: var(--orange-soft);
+  transform: scale(1.1);
 }
 .faq__item.is-open .faq__icon {
   background: var(--orange);
   border-color: var(--orange);
   color: #fff;
-  transform: rotate(45deg);
+  transform: rotate(135deg) scale(1.1);
 }
 .faq__item.is-open .faq__question { color: var(--orange); }
-.faq__answer { max-height: 0; overflow: hidden; transition: max-height .32s ease; }
-.faq__item.is-open .faq__answer { max-height: 300px; }
-.faq__answer p { padding-bottom: 22px; font-size: clamp(0.85rem, 1.1vw, 0.95rem); color: var(--text-mid); line-height: 1.73; }
+.faq__answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s var(--ease-out-expo);
+}
+.faq__item.is-open .faq__answer { max-height: 400px; }
+.faq__answer p { 
+  padding-bottom: 22px; 
+  font-size: clamp(0.85rem, 1.1vw, 0.95rem); 
+  color: var(--text-mid); 
+  line-height: 1.73;
+  transition: all 0.3s ease;
+}
+.faq__item.is-open .faq__answer p { color: var(--text-dark); }
 
 /* ===========================================
    CTA BLOCK
@@ -892,6 +1352,10 @@ ul { list-style: none; }
   color: #fff;
   position: relative;
   overflow: hidden;
+  transition: all 0.5s ease;
+}
+.cta-block:hover {
+  transform: scale(1.01);
 }
 .cta-block::before {
   content: '';
@@ -900,6 +1364,7 @@ ul { list-style: none; }
   width: 350px; height: 350px;
   background: radial-gradient(circle, rgba(197,90,44,.2), transparent 65%);
   pointer-events: none;
+  animation: cta-glow 4s ease-in-out infinite;
 }
 .cta-block::after {
   content: '';
@@ -908,12 +1373,20 @@ ul { list-style: none; }
   width: 300px; height: 300px;
   background: radial-gradient(circle, rgba(197,90,44,.12), transparent 65%);
   pointer-events: none;
+  animation: cta-glow 4s ease-in-out 1.5s infinite;
+}
+@keyframes cta-glow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2) translate(20px, -20px); }
 }
 .cta-block__eyebrow {
   font-size: clamp(0.65rem, 1vw, 0.8rem); font-weight: 600;
   letter-spacing: .15em; text-transform: uppercase;
   opacity: .36; margin-bottom: 16px;
+  position: relative;
+  transition: all 0.3s ease;
 }
+.cta-block:hover .cta-block__eyebrow { opacity: .55; }
 .cta-block__heading {
   font-size: clamp(1.8rem, 3.5vw, 3rem);
   font-weight: 700;
@@ -921,7 +1394,9 @@ ul { list-style: none; }
   line-height: 1.2;
   margin-bottom: 16px;
   position: relative;
+  transition: all 0.4s ease;
 }
+.cta-block:hover .cta-block__heading { transform: scale(1.02); }
 .cta-block__subtext {
   opacity: .52;
   font-size: clamp(0.85rem, 1.2vw, 1rem);
@@ -929,7 +1404,9 @@ ul { list-style: none; }
   margin: 0 auto 32px;
   line-height: 1.68;
   position: relative;
+  transition: all 0.3s ease;
 }
+.cta-block:hover .cta-block__subtext { opacity: .7; }
 .cta-block__buttons {
   display: flex;
   gap: 16px;
@@ -945,6 +1422,7 @@ ul { list-style: none; }
   background: var(--text-dark);
   color: #fff;
   padding: clamp(56px, 8vw, 96px) 0 0;
+  position: relative;
 }
 .footer__grid {
   display: grid;
@@ -957,8 +1435,12 @@ ul { list-style: none; }
   font-size: clamp(1.1rem, 1.5vw, 1.3rem);
   letter-spacing: -.02em;
   margin-bottom: 12px;
+  transition: all 0.4s var(--ease-spring);
+  display: inline-block;
 }
-.footer__brand-logo span { color: var(--orange); }
+.footer__brand-logo:hover { transform: scale(1.1) rotate(-3deg); }
+.footer__brand-logo span { color: var(--orange); transition: all 0.4s ease; }
+.footer__brand-logo:hover span { color: #fff; }
 .footer__brand-tagline { font-size: clamp(0.75rem, 1vw, 0.85rem); opacity: .4; max-width: 280px; line-height: 1.68; margin-bottom: 22px; }
 
 .footer__socials { display: flex; gap: 10px; }
@@ -970,18 +1452,34 @@ ul { list-style: none; }
   display: flex; align-items: center; justify-content: center;
   color: rgba(255,255,255,.38);
   font-size: 0.85rem;
-  transition: .18s;
+  transition: all 0.5s var(--ease-bounce);
 }
-.footer__social-btn:hover { background: var(--orange); border-color: var(--orange); color: #fff; }
+.footer__social-btn:hover { 
+  background: var(--orange); 
+  border-color: var(--orange); 
+  color: #fff; 
+  transform: translateY(-8px) rotate(10deg) scale(1.2);
+}
 
 .footer__col h5 {
   font-size: clamp(0.65rem, 0.9vw, 0.75rem); font-weight: 600;
   letter-spacing: .14em; text-transform: uppercase;
   opacity: .32; margin-bottom: 18px;
+  transition: all 0.3s ease;
 }
+.footer__col:hover h5 { opacity: .6; color: var(--orange); }
 .footer__col ul { display: flex; flex-direction: column; gap: 10px; }
-.footer__col a { font-size: clamp(0.8rem, 1vw, 0.9rem); opacity: .52; transition: opacity .18s, color .18s; }
-.footer__col a:hover { opacity: 1; color: #D96D3C; }
+.footer__col a { 
+  font-size: clamp(0.8rem, 1vw, 0.9rem); 
+  opacity: .52; 
+  transition: all 0.3s var(--ease-bounce);
+  display: inline-block;
+}
+.footer__col a:hover { 
+  opacity: 1; 
+  color: #D96D3C; 
+  transform: translateX(8px);
+}
 .footer__col i { width: 14px; }
 
 .footer__bottom {
@@ -997,7 +1495,7 @@ ul { list-style: none; }
 }
 
 /* ===========================================
-   FLOATING BUTTONS — Larger for 4K touch
+   FLOATING BUTTONS
 =========================================== */
 .whatsapp-float {
   position: fixed;
@@ -1010,9 +1508,19 @@ ul { list-style: none; }
   font-size: 1.6rem;
   box-shadow: 0 8px 28px rgba(37,211,102,.32);
   z-index: 800;
-  transition: transform .2s, box-shadow .2s;
+  transition: all 0.5s var(--ease-bounce);
+  animation: wa-bounce 3s ease-in-out infinite;
 }
-.whatsapp-float:hover { transform: scale(1.08); box-shadow: 0 12px 32px rgba(37,211,102,.4); }
+@keyframes wa-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-12px) rotate(-5deg); }
+  75% { transform: translateY(-6px) rotate(5deg); }
+}
+.whatsapp-float:hover {
+  animation: none;
+  transform: scale(1.2) rotate(0deg);
+  box-shadow: 0 16px 40px rgba(37,211,102,.5);
+}
 
 .back-to-top {
   position: fixed;
@@ -1027,131 +1535,103 @@ ul { list-style: none; }
   z-index: 800;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .2s, transform .2s;
+  transition: all 0.5s var(--ease-bounce);
   box-shadow: var(--shadow-sm);
 }
 .back-to-top.is-visible { opacity: 1; pointer-events: all; }
-.back-to-top:hover { background: var(--orange); border-color: var(--orange); color: #fff; transform: translateY(-3px); }
+.back-to-top:hover { 
+  background: var(--orange); 
+  border-color: var(--orange); 
+  color: #fff; 
+  transform: translateY(-8px) scale(1.1);
+}
 
 /* ===========================================
-   SCROLL REVEAL
+   SCROLL REVEAL — Crazy staggered animations
 =========================================== */
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity .55s ease, transform .55s ease;
+  transform: translateY(60px) scale(0.92);
+  transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+  will-change: transform, opacity;
 }
-.reveal.is-visible { opacity: 1; transform: none; }
-.reveal.delay-1 { transition-delay: .08s; }
-.reveal.delay-2 { transition-delay: .16s; }
-.reveal.delay-3 { transition-delay: .24s; }
-.reveal.delay-4 { transition-delay: .32s; }
+.reveal.is-visible { 
+  opacity: 1; 
+  transform: translateY(0) scale(1);
+}
+.reveal.delay-1 { transition-delay: .1s; }
+.reveal.delay-2 { transition-delay: .2s; }
+.reveal.delay-3 { transition-delay: .3s; }
+.reveal.delay-4 { transition-delay: .4s; }
+.reveal.delay-5 { transition-delay: .5s; }
+.reveal.delay-6 { transition-delay: .6s; }
+
+/* Left and right slide variants */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-80px);
+  transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+}
+.reveal-left.is-visible { opacity: 1; transform: translateX(0); }
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(80px);
+  transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+}
+.reveal-right.is-visible { opacity: 1; transform: translateX(0); }
+
+/* Scale reveal */
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-bounce);
+}
+.reveal-scale.is-visible { opacity: 1; transform: scale(1); }
 
 /* ===========================================
-   RESPONSIVE — 4K+ (3840px and up)
-   Extra spacing and larger elements
+   RESPONSIVE
 =========================================== */
 @media (min-width: 2560px) {
-  .hero__grid {
-    gap: 100px;
-  }
-  
-  .stats-band__cell {
-    padding: 60px 20px;
-  }
-  
-  .values__grid,
-  .results__grid,
-  .testimonials__grid {
-    gap: 32px;
-  }
-  
-  .course-row {
-    padding: 28px 32px;
-  }
-  
-  .course-row__icon {
-    width: 52px;
-    height: 52px;
-    font-size: 1.3rem;
-  }
-  
-  .stats-band__number {
-    font-size: 3rem;
-  }
+  .hero__grid { gap: 100px; }
+  .stats-band__cell { padding: 60px 20px; }
+  .values__grid, .results__grid, .testimonials__grid { gap: 32px; }
+  .course-row { padding: 28px 32px; }
+  .course-row__icon { width: 52px; height: 52px; font-size: 1.3rem; }
+  .stats-band__number { font-size: 3rem; }
 }
-
-/* ===========================================
-   RESPONSIVE — Laptop/Desktop 1440px
-=========================================== */
 @media (max-width: 1440px) {
-  .wrapper {
-    max-width: 1280px;
-  }
+  .wrapper { max-width: 1280px; }
 }
-
-/* ===========================================
-   RESPONSIVE — Tablet 1024px
-=========================================== */
 @media (max-width: 1024px) {
-  .hero__grid {
-    grid-template-columns: 1fr;
-    max-width: 680px;
-    margin: 0 auto;
-  }
+  .hero__grid { grid-template-columns: 1fr; max-width: 680px; margin: 0 auto; }
   .hero__image-wrap { height: 420px; }
   .hero__description { max-width: 100%; }
-
-  .about__grid {
-    grid-template-columns: 1fr;
-    max-width: 620px;
-    margin: 0 auto;
-  }
-  .about__photo-inner { aspect-ratio: 16/9; }
+  .about__grid { grid-template-columns: 1fr; max-width: 620px; margin: 0 auto; }
   .about__years-badge { bottom: 16px; right: 16px; }
-
   .affiliate__grid { grid-template-columns: 1fr; }
-
   .values__grid       { grid-template-columns: repeat(2, 1fr); }
   .results__grid      { grid-template-columns: 1fr 1fr; }
   .testimonials__grid { grid-template-columns: 1fr 1fr; }
-
   .footer__grid { grid-template-columns: 1fr 1fr; }
 }
-
-/* ===========================================
-   RESPONSIVE — Mobile 768px
-=========================================== */
 @media (max-width: 768px) {
   .navbar__links { display: none; }
   .hamburger { display: flex; }
-
   .page-section { padding: 56px 0; }
-
   .stats-band__grid { grid-template-columns: repeat(2, 1fr); }
   .stats-band__cell:nth-child(2) { border-right: none; }
   .stats-band__cell:nth-child(3) { border-top: 1px solid var(--border); }
   .stats-band__cell:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
-
   .courses__list      { grid-template-columns: 1fr 1fr; }
   .results__grid      { grid-template-columns: 1fr; }
   .testimonials__grid { grid-template-columns: 1fr; }
   .values__grid       { grid-template-columns: 1fr 1fr; }
-
   .footer__grid { grid-template-columns: 1fr; gap: 32px; }
   .footer__bottom { flex-direction: column; text-align: center; }
 }
-
-/* ===========================================
-   RESPONSIVE — Small Mobile 680px
-=========================================== */
 @media (max-width: 680px) {
-  .course-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 16px;
-  }
+  .course-row { flex-direction: column; align-items: flex-start; gap: 10px; padding: 16px; }
   .course-row__title  { white-space: normal; font-size: 0.85rem; }
   .course-row__arrow  { display: none; }
   .values__grid { grid-template-columns: 1fr; }
@@ -1163,6 +1643,12 @@ ul { list-style: none; }
 </style>
 </head>
 <body>
+
+<!-- ── Page Loader ── -->
+<div class="page-loader" id="pageLoader">
+  <div class="page-loader__spinner"></div>
+  <div class="page-loader__text">Loading Usmarketing...</div>
+</div>
 
 <!-- ── WhatsApp Float ── -->
 <a href="https://wa.link/j9o3kl" target="_blank" rel="noopener" class="whatsapp-float" aria-label="Chat on WhatsApp">
@@ -1176,7 +1662,7 @@ ul { list-style: none; }
 <div class="drawer-overlay" id="drawerOverlay"></div>
 <aside class="drawer" id="mobileDrawer">
   <div class="drawer__header">
-    <div class="navbar__logo">Ibrahim<span>.</span></div>
+    <div class="navbar__logo">Usmarketing<span>.</span></div>
     <button class="drawer__close" id="drawerClose"><i class="fas fa-times"></i></button>
   </div>
   <nav class="drawer__nav" id="drawerNav">
@@ -1191,7 +1677,7 @@ ul { list-style: none; }
   </nav>
   <div class="drawer__footer">
     <a href="https://wa.link/j9o3kl" target="_blank" class="btn btn--whatsapp btn--full">
-      <i class="fab fa-whatsapp"></i> WhatsApp Ibrahim
+      <i class="fab fa-whatsapp"></i> WhatsApp Usman
     </a>
   </div>
 </aside>
@@ -1199,8 +1685,7 @@ ul { list-style: none; }
 <!-- ── Navigation ── -->
 <nav class="navbar" id="navbar">
   <div class="wrapper navbar__inner">
-    <a href="#home" class="navbar__logo">Ibrahim<span>.</span></a>
-
+    <a href="#home" class="navbar__logo">usmarketing<span>.</span></a>
     <div class="navbar__links" id="navLinks">
       <a href="#home">Home</a>
       <a href="#about">About</a>
@@ -1209,7 +1694,6 @@ ul { list-style: none; }
       <a href="#results">Results</a>
       <a href="#faq">FAQ</a>
     </div>
-
     <div class="navbar__actions">
       <a href="https://wa.link/j9o3kl" target="_blank" class="btn btn--whatsapp btn--small" id="navEnrolBtn">
         <i class="fab fa-whatsapp"></i> Enrol
@@ -1231,25 +1715,18 @@ ul { list-style: none; }
 <section id="home" class="hero">
   <div class="wrapper">
     <div class="hero__grid">
-
       <div>
-        <div class="hero__live-badge reveal">
-          <span class="hero__live-dot"></span>
-          Nigeria's #1 Affiliate Mentor &nbsp;·&nbsp; Lagos
-        </div>
-
-        <h1 class="hero__title reveal delay-1">
+       
+        <h1 class="hero__title reveal-left delay-1">
           I don't just teach<br>
           <em>Affiliate</em><br>
           Marketing —<br>
           I build millionaires.
         </h1>
-
-        <p class="hero__description reveal delay-2">
-          Ibrahim Usman: digital strategist and creator of 10 income courses. Over 11,000 Nigerians are now earning from home. Zero capital required — your smartphone is enough.
+        <p class="hero__description reveal-left delay-2">
+          Ibrahim Usman: digital strategist and creator of 10 income courses. Over 45 Nigerians are now earning from home. Zero capital required — your smartphone is enough.
         </p>
-
-        <div class="hero__buttons reveal delay-3">
+        <div class="hero__buttons reveal-left delay-3">
           <a href="#courses" class="btn btn--primary">
             <i class="fas fa-layer-group"></i> Explore 10 Courses
           </a>
@@ -1257,31 +1734,29 @@ ul { list-style: none; }
             <i class="fab fa-whatsapp"></i> Chat on WhatsApp
           </a>
         </div>
-
-        <div class="hero__proof reveal delay-4">
+        <div class="hero__proof reveal-left delay-4">
           <div class="hero__avatars">
+            <div class="hero__avatar">FK</div>
             <div class="hero__avatar">AB</div>
-            <div class="hero__avatar">JE</div>
             <div class="hero__avatar">PO</div>
             <div class="hero__avatar" style="background:var(--orange-faint)">+</div>
           </div>
-          <div class="hero__proof-text">Trusted by <strong>11,000+</strong> students</div>
+          <div class="hero__proof-text">Trusted by <strong>45+</strong> students</div>
           <div class="hero__divider"></div>
           <div>
-            <div class="hero__stat-value">₦2.4B+</div>
+            <div class="hero__stat-value">₦60.3M+</div>
             <div class="hero__stat-label">student earnings</div>
           </div>
           <div class="hero__divider"></div>
           <div>
-            <div class="hero__stat-value">27+</div>
+            <div class="hero__stat-value">4+</div>
             <div class="hero__stat-label">countries</div>
           </div>
         </div>
       </div>
-
-      <div class="hero__image-wrap reveal delay-2">
+      <div class="hero__image-wrap reveal-scale delay-2">
         <img
-          src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&auto=format&q=85"
+          src="./c5ff0f55-a554-423a-a2aa-7c6dbdd6d945.png"
           alt="Ibrahim Usman — Affiliate Marketing Mentor, Lagos Nigeria"
           loading="eager">
         <div class="hero__image-caption">
@@ -1292,7 +1767,6 @@ ul { list-style: none; }
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -1303,20 +1777,20 @@ ul { list-style: none; }
 <div class="stats-band">
   <div class="wrapper">
     <div class="stats-band__grid">
-      <div class="stats-band__cell">
+      <div class="stats-band__cell reveal-scale">
         <div class="stats-band__number" data-count="10" data-suffix="+">10+</div>
         <div class="stats-band__label">Premium Courses</div>
       </div>
-      <div class="stats-band__cell">
-        <div class="stats-band__number" data-count="11000" data-suffix="+">11,000+</div>
+      <div class="stats-band__cell reveal-scale delay-1">
+        <div class="stats-band__number" data-count="45" data-suffix="+">45+</div>
         <div class="stats-band__label">Students Trained</div>
       </div>
-      <div class="stats-band__cell">
-        <div class="stats-band__number" data-prefix="₦" data-count="2400" data-suffix="M+">₦2,400M+</div>
+      <div class="stats-band__cell reveal-scale delay-2">
+        <div class="stats-band__number" data-prefix="₦" data-count="60.3" data-suffix="M+">₦60.3M+</div>
         <div class="stats-band__label">Student Earnings</div>
       </div>
-      <div class="stats-band__cell">
-        <div class="stats-band__number" data-count="27" data-suffix="+">27+</div>
+      <div class="stats-band__cell reveal-scale delay-3">
+        <div class="stats-band__number" data-count="4" data-suffix="+">4+</div>
         <div class="stats-band__label">Countries</div>
       </div>
     </div>
@@ -1329,11 +1803,10 @@ ul { list-style: none; }
 <section id="about" class="page-section">
   <div class="wrapper">
     <div class="about__grid">
-
-      <div class="about__photo-wrap reveal">
+      <div class="about__photo-wrap reveal-scale">
         <div class="about__photo-inner">
           <img
-            src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=1000&auto=format&q=85"
+            src="./61b8091c-1152-4f6c-a0ea-fdba5ea3e266.png"
             alt="Ibrahim Usman">
         </div>
         <div class="about__years-badge">
@@ -1341,20 +1814,19 @@ ul { list-style: none; }
           <div class="years-label">Years</div>
         </div>
       </div>
-
-      <div class="reveal delay-1">
-        <div class="section-label">About Ibrahim</div>
-        <h2 class="section-heading">From Lagos to <em>27 countries</em> — one phone at a time.</h2>
+      <div class="reveal-right delay-1">
+        <div class="section-label">About Usman</div>
+        <h2 class="section-heading">From Lagos to <em>4 countries</em> — one phone at a time.</h2>
         <blockquote class="about__quote">
-          "I started with a smartphone and belief. Now 11,000+ Nigerians earn online."
+          "I started with a smartphone and belief. Now 45+ Nigerians earn online."
         </blockquote>
         <p class="section-subtext">
-          Based in Lagos, Nigeria, Ibrahim has spent 9+ years refining a smartphone-first affiliate system. Zero capital. Zero inventory. Zero prior experience needed. Trusted across Africa and beyond.
+          Based in Lagos, Nigeria, Usman has spent 9+ years refining a smartphone-first affiliate system. Zero capital. Zero inventory. Zero prior experience needed. Trusted across Africa and beyond.
         </p>
         <div class="about__features">
           <div class="about__feature-item">
             <div class="about__feature-icon"><i class="fas fa-map-marker-alt"></i></div>
-            <div><strong>Lagos, Nigeria</strong> — mentoring students across 27 countries</div>
+            <div><strong>Lagos, Nigeria</strong> — mentoring students across 4 countries</div>
           </div>
           <div class="about__feature-item">
             <div class="about__feature-icon"><i class="fas fa-mobile-alt"></i></div>
@@ -1371,10 +1843,9 @@ ul { list-style: none; }
         </div>
         <div class="about__buttons">
           <a href="#courses" class="btn btn--primary">View All Courses</a>
-          <a href="https://wa.link/j9o3kl" target="_blank" class="btn btn--secondary">Message Ibrahim</a>
+          <a href="https://wa.link/j9o3kl" target="_blank" class="btn btn--secondary">Message Usman</a>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -1389,10 +1860,9 @@ ul { list-style: none; }
       <h2 class="section-heading">The simplest path to <em>online income</em></h2>
       <p class="section-subtext section-subtext--center">No product. No capital. No referrals. Just your phone and a proven system.</p>
     </div>
-
     <div class="affiliate__grid">
-      <div class="affiliate__dark-card reveal">
-        <div class="card-label"><i class="fas fa-quote-left" style="margin-right:6px"></i>Ibrahim's definition</div>
+      <div class="affiliate__dark-card reveal-left">
+        <div class="card-label"><i class="fas fa-quote-left" style="margin-right:6px"></i>Usman's definition</div>
         <blockquote>
           "Affiliate marketing lets anyone with a phone earn commissions by promoting companies online — the same model used by Amazon, Jumia, and thousands of global brands. No investment. No referrals required."
         </blockquote>
@@ -1400,8 +1870,7 @@ ul { list-style: none; }
           <i class="fab fa-whatsapp"></i> Learn this system
         </a>
       </div>
-
-      <div class="affiliate__light-card reveal delay-1">
+      <div class="affiliate__light-card reveal-right delay-1">
         <h3>Why Nigerians win with affiliate marketing</h3>
         <div class="checklist">
           <div class="checklist__item"><div class="checklist__icon"><i class="fas fa-check"></i></div>Zero capital — start today with what you have</div>
@@ -1424,9 +1893,8 @@ ul { list-style: none; }
     <div class="reveal">
       <div class="section-label">Flagship Programs</div>
       <h2 class="section-heading">10 courses. One <em>wealth path.</em></h2>
-      <p class="section-subtext">Smartphone-friendly. Pay once, lifetime access. Ibrahim coaches you personally.</p>
+      <p class="section-subtext">Smartphone-friendly. Pay once, lifetime access. Usman coaches you personally.</p>
     </div>
-
     <div class="courses__list reveal delay-1">
       <a href="https://wa.link/j9o3kl" target="_blank" class="course-row">
         <span class="course-row__number">01</span>
@@ -1519,11 +1987,10 @@ ul { list-style: none; }
         <i class="fas fa-arrow-right course-row__arrow"></i>
       </a>
     </div>
-
     <div class="courses__footer-note reveal delay-2">
       <i class="fas fa-info-circle" style="color:var(--orange)"></i>&nbsp;
       Not sure where to start?&nbsp;
-      <a href="https://wa.link/j9o3kl" target="_blank">Message Ibrahim on WhatsApp</a> for a free recommendation.
+      <a href="https://wa.link/j9o3kl" target="_blank">Message Usman on WhatsApp</a> for a free recommendation.
     </div>
   </div>
 </section>
@@ -1538,22 +2005,22 @@ ul { list-style: none; }
       <h2 class="section-heading">Built on <em>integrity</em> and real results</h2>
     </div>
     <div class="values__grid">
-      <div class="value-card reveal delay-1">
+      <div class="value-card reveal-scale delay-1">
         <div class="value-card__icon"><i class="fas fa-handshake"></i></div>
         <div class="value-card__title">Honest &amp; Transparent</div>
         <div class="value-card__desc">Real numbers, real student names, real cities. No fake screenshots, no inflated claims.</div>
       </div>
-      <div class="value-card reveal delay-2">
+      <div class="value-card reveal-scale delay-2">
         <div class="value-card__icon"><i class="fas fa-shield-alt"></i></div>
         <div class="value-card__title">Ethical Above All</div>
-        <div class="value-card__desc">No pyramid schemes. No Ponzi. Value-first in everything Ibrahim teaches and practices.</div>
+        <div class="value-card__desc">No pyramid schemes. No Ponzi. Value-first in everything Usman teaches and practices.</div>
       </div>
-      <div class="value-card reveal delay-3">
+      <div class="value-card reveal-scale delay-3">
         <div class="value-card__icon"><i class="fas fa-chart-line"></i></div>
         <div class="value-card__title">Results-Driven</div>
         <div class="value-card__desc">9+ years of data-driven frameworks, tested and refined for Nigerian markets.</div>
       </div>
-      <div class="value-card reveal delay-4">
+      <div class="value-card reveal-scale delay-4">
         <div class="value-card__icon"><i class="fas fa-rocket"></i></div>
         <div class="value-card__title">Built to Last</div>
         <div class="value-card__desc">Consistent systems engineered for sustainable, long-term financial freedom.</div>
@@ -1573,7 +2040,7 @@ ul { list-style: none; }
       <p class="section-subtext section-subtext--center">Real people. Real cities. Real earnings — all verified.</p>
     </div>
     <div class="results__grid">
-      <div class="result-card reveal delay-1">
+      <div class="result-card reveal-left delay-1">
         <div class="result-card__stat">₦850K/mo</div>
         <div class="result-card__title">Zero to Top Affiliate in 5 Months</div>
         <div class="result-card__body">Joined with zero experience. Used WhatsApp and Facebook targeting from the Blueprint. Hit ₦850K/month within 5 months of enrolling.</div>
@@ -1585,19 +2052,19 @@ ul { list-style: none; }
           </div>
         </div>
       </div>
-      <div class="result-card reveal delay-2">
+      <div class="result-card reveal-scale delay-2">
         <div class="result-card__stat">+374%</div>
         <div class="result-card__title">Revenue Jump in 90 Days</div>
-        <div class="result-card__body">Revenue grew from ₦380K to ₦1.8M/month in under 90 days after the Digital Marketing course. Emmanuel now runs a full agency.</div>
+        <div class="result-card__body">Revenue grew from ₦380K to ₦1.8M/month in under 90 days after the Digital Marketing course. Promsie now runs a full agency.</div>
         <div class="result-card__author">
-          <div class="result-card__avatar">EO</div>
+          <div class="result-card__avatar">PO</div>
           <div>
-            <div class="result-card__author-name">Emmanuel Obi</div>
+            <div class="result-card__author-name">Promise Obi</div>
             <div class="result-card__author-city"><i class="fas fa-map-marker-alt" style="font-size:.55rem"></i> Abuja, Nigeria</div>
           </div>
         </div>
       </div>
-      <div class="result-card reveal delay-3">
+      <div class="result-card reveal-right delay-3">
         <div class="result-card__stat">₦1.2M</div>
         <div class="result-card__title">First Month Using TikTok Blueprint</div>
         <div class="result-card__body">Applied the TikTok + WhatsApp Money Blueprint. Earned ₦1.2M in commissions in his very first month — using only a Tecno phone.</div>
@@ -1623,11 +2090,11 @@ ul { list-style: none; }
       <h2 class="section-heading">What students <em>say &amp; achieve</em></h2>
     </div>
     <div class="testimonials__grid">
-      <div class="testimonial-card reveal delay-1">
+      <div class="testimonial-card reveal-left delay-1">
         <div class="testimonial-card__stars">
           <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
         </div>
-        <div class="testimonial-card__quote">"Ibrahim's course changed my life. I made my first ₦120K commission in 6 weeks — with just my phone. No laptop, no savings. Real strategy, real money. I tell everyone I know about this man."</div>
+        <div class="testimonial-card__quote">"Usman's course changed my life. I made my first ₦120K commission in 6 weeks — with just my phone. No laptop, no savings. Real strategy, real money. I tell everyone I know about this man."</div>
         <div class="testimonial-card__footer">
           <div class="testimonial-card__avatar">AB</div>
           <div>
@@ -1637,11 +2104,11 @@ ul { list-style: none; }
           <div class="testimonial-card__earning">₦850K/mo</div>
         </div>
       </div>
-      <div class="testimonial-card reveal delay-2">
+      <div class="testimonial-card reveal-scale delay-2">
         <div class="testimonial-card__stars">
           <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
         </div>
-        <div class="testimonial-card__quote">"₦1.2M in my first TikTok month. I only had a Tecno phone. Ibrahim is a genuine blessing to Nigerian youth. I thought it was too good — but I have the bank alerts to prove it. Wallahi!"</div>
+        <div class="testimonial-card__quote">"₦1.2M in my first TikTok month. I only had a Tecno phone. Usman is a genuine blessing to Nigerian youth. I thought it was too good — but I have the bank alerts to prove it. Wallahi!"</div>
         <div class="testimonial-card__footer">
           <div class="testimonial-card__avatar">PO</div>
           <div>
@@ -1651,11 +2118,11 @@ ul { list-style: none; }
           <div class="testimonial-card__earning">₦1.2M/mo</div>
         </div>
       </div>
-      <div class="testimonial-card reveal delay-3">
+      <div class="testimonial-card reveal-right delay-3">
         <div class="testimonial-card__stars">
           <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
         </div>
-        <div class="testimonial-card__quote">"I'm a mother of 3 with zero tech background. Ibrahim's smartphone course gave me ₦200K+ monthly from home. My family has food. My children are in school. This man changed our entire lives."</div>
+        <div class="testimonial-card__quote">"I'm a mother of 3 with zero tech background. Usman's smartphone course gave me ₦200K+ monthly from home. My family has food. My children are in school. This man changed our entire lives."</div>
         <div class="testimonial-card__footer">
           <div class="testimonial-card__avatar">FK</div>
           <div>
@@ -1685,7 +2152,7 @@ ul { list-style: none; }
           <span class="faq__icon"><i class="fas fa-plus"></i></span>
         </button>
         <div class="faq__answer">
-          <p>Yes — every course is designed smartphone-first. WhatsApp, TikTok, YouTube all work on any Android or iPhone. Ibrahim built this system so Nigerians without laptops can still succeed. Your phone is everything you need.</p>
+          <p>Yes — every course is designed smartphone-first. WhatsApp, TikTok, YouTube all work on any Android or iPhone. Usman built this system so Nigerians without laptops can still succeed. Your phone is everything you need.</p>
         </div>
       </div>
       <div class="faq__item reveal delay-1">
@@ -1694,7 +2161,7 @@ ul { list-style: none; }
           <span class="faq__icon"><i class="fas fa-plus"></i></span>
         </button>
         <div class="faq__answer">
-          <p>Zero capital. No inventory, no platform fees, no upfront investment. The only things you need are your phone, your time, and Ibrahim's blueprint. Many students earn their first commission within 30 days.</p>
+          <p>Zero capital. No inventory, no platform fees, no upfront investment. The only things you need are your phone, your time, and Usman's blueprint. Many students earn their first commission within 30 days.</p>
         </div>
       </div>
       <div class="faq__item reveal delay-2">
@@ -1703,7 +2170,7 @@ ul { list-style: none; }
           <span class="faq__icon"><i class="fas fa-plus"></i></span>
         </button>
         <div class="faq__answer">
-          <p>Message Ibrahim directly on WhatsApp. He will share full details, Naira pricing, and flexible payment options. You get instant access after enrolment — lifetime access included, plus all future updates at no extra cost.</p>
+          <p>Message Usman directly on WhatsApp. He will share full details, Naira pricing, and flexible payment options. You get instant access after enrolment — lifetime access included, plus all future updates at no extra cost.</p>
         </div>
       </div>
       <div class="faq__item reveal delay-3">
@@ -1721,16 +2188,16 @@ ul { list-style: none; }
           <span class="faq__icon"><i class="fas fa-plus"></i></span>
         </button>
         <div class="faq__answer">
-          <p>Most students see their first earnings within 30–60 days. Some — like Precious from Port Harcourt — have earned over ₦1.2M in their very first month. Results vary, but Ibrahim coaches you personally until you succeed.</p>
+          <p>Most students see their first earnings within 30–60 days. Some — like Precious from Port Harcourt — have earned over ₦1.2M in their very first month. Results vary, but Usman coaches you personally until you succeed.</p>
         </div>
       </div>
-      <div class="faq__item reveal">
+      <div class="faq__item reveal delay-5">
         <button class="faq__question">
           Which course should I start with?
           <span class="faq__icon"><i class="fas fa-plus"></i></span>
         </button>
         <div class="faq__answer">
-          <p>If you are completely new, start with the Affiliate Marketing Blueprint — it is the foundation. If you already use TikTok or WhatsApp daily, the TWMB course is ideal. Message Ibrahim and he will personally recommend the right course for you, for free.</p>
+          <p>If you are completely new, start with the Affiliate Marketing Blueprint — it is the foundation. If you already use TikTok or WhatsApp daily, the TWMB course is ideal. Message Usman and he will personally recommend the right course for you, for free.</p>
         </div>
       </div>
     </div>
@@ -1742,10 +2209,10 @@ ul { list-style: none; }
 ══════════════════════════════════════════ -->
 <section class="page-section">
   <div class="wrapper">
-    <div class="cta-block reveal">
+    <div class="cta-block reveal-scale">
       <div class="cta-block__eyebrow">Ready to start?</div>
-      <h2 class="cta-block__heading">Join 11,000+ Nigerians who changed their financial story.</h2>
-      <p class="cta-block__subtext">Message Ibrahim today. No obligation. He will recommend the right course and coach you every step of the way.</p>
+      <h2 class="cta-block__heading">Join 45+ Nigerians who changed their financial story.</h2>
+      <p class="cta-block__subtext">Message Usman today. No obligation. He will recommend the right course and coach you every step of the way.</p>
       <div class="cta-block__buttons">
         <a href="https://wa.link/j9o3kl" target="_blank" class="btn btn--white">
           <i class="fab fa-whatsapp"></i> Chat on WhatsApp
@@ -1765,8 +2232,8 @@ ul { list-style: none; }
   <div class="wrapper">
     <div class="footer__grid">
       <div>
-        <div class="footer__brand-logo">Ibrahim<span>.</span></div>
-        <div class="footer__brand-tagline">Lagos, Nigeria — Africa's trusted affiliate marketing mentor since 2015. Empowering 11,000+ students across 27 countries.</div>
+        <div class="footer__brand-logo">Usmarketing<span>.</span></div>
+        <div class="footer__brand-tagline">Lagos, Nigeria — Africa's trusted affiliate marketing mentor since 2015. Empowering 45+ students across 4 countries.</div>
         <div class="footer__socials">
           <a href="https://wa.link/j9o3kl" target="_blank" class="footer__social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
           <a href="#" class="footer__social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
@@ -1803,6 +2270,16 @@ ul { list-style: none; }
 </footer>
 
 <script>
+/* ─── PAGE LOADER ─── */
+window.addEventListener('load', () => {
+  const loader = document.getElementById('pageLoader');
+  if (loader) {
+    setTimeout(() => {
+      loader.classList.add('is-hidden');
+    }, 600);
+  }
+});
+
 /* ─── NAV SCROLL EFFECTS ─── */
 const navbar       = document.getElementById('navbar');
 const backToTop    = document.getElementById('backToTop');
@@ -1882,16 +2359,23 @@ function animateCounter(element) {
   const suffix = element.dataset.suffix || '';
   if (isNaN(target)) return;
   let current = 0;
-  const increment = target / (1100 / 14);
-  const timer = setInterval(() => {
-    current += increment;
-    if (current >= target) {
-      element.textContent = prefix + target.toLocaleString() + suffix;
-      clearInterval(timer);
+  const duration = 1500;
+  const startTime = performance.now();
+  
+  function update(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    current = Math.floor(target * eased);
+    element.textContent = prefix + current.toLocaleString() + suffix;
+    if (progress < 1) {
+      requestAnimationFrame(update);
     } else {
-      element.textContent = prefix + Math.floor(current).toLocaleString() + suffix;
+      element.textContent = prefix + target.toLocaleString() + suffix;
     }
-  }, 14);
+  }
+  
+  requestAnimationFrame(update);
 }
 
 const counterObserver = new IntersectionObserver(entries => {
@@ -1913,9 +2397,9 @@ const revealObserver = new IntersectionObserver(entries => {
       revealObserver.unobserve(entry.target);
     }
   });
-}, { threshold: 0.06, rootMargin: '0px 0px -14px 0px' });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => revealObserver.observe(el));
 
 highlightActiveNav();
 </script>
